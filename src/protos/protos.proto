@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+message Input {
+    // The input's index
+    int64 idx = 1;
+}
+
+message Gate {
+    // The gate's ciphertexts
+    bytes c_00 = 1;
+    bytes c_01 = 2;
+    bytes c_10 = 3;
+    bytes c_11 = 4;
+    // The gate's children (these aren't optional since gates necessarily have children; all leaves are Inputs)
+    GarbledNodeSend left = 5;
+    GarbledNodeSend right = 6;
+}
+
+message GarbledNodeSend {
+    // An input node
+    optional Input input = 1;
+    // A gate
+    optional Gate gate = 2;
+}
+
+message GarbledCircuitSend {
+    // The output gate
+    GarbledNodeSend out = 1;
+    // The number of inputs to the circuit
+    int64 n = 2;
+}
+
+// An RSA public key; needed for the oblivious transfer
+message RsaPubkey {
+    bytes n = 1;
+    bytes e = 2;
+}
+
+// OT X values
+message Xs {
+    bytes x_0 = 1;
+    bytes x_1 = 2;
+}
+
+// OT receiver responds with the blinded message index
+message OtBlindedIdx {
+    bytes v = 1;
+}
+
+// OT sender responds with m_prime_0 and m_prime_1, from which the desired message can be derived
+message OtEncMessages {
+    bytes m_prime_0 = 1;
+    bytes m_prime_1 = 2;
+}
+
+// The garbler sends the receiver the garbler's input keys
+message GarblerKeys {
+    repeated bytes keys = 1;
+}
+
+// The receiver sends this to the garbler to indicate the evaluation result
+message EvalResult {
+    bool result = 1;
+}
